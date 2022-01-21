@@ -169,11 +169,12 @@
         <input id='hidden_data' type="hidden" name="photo1" />
 
         <br />
-        <br /><canvas class='resizingcanvas' id="imgcanvas" style="background-color:#fff"></canvas><br/>
+        <br /><canvas class='resizingcanvas' id="imgcanvas" style="background-color:#fff; display: none;"></canvas><br/>
         <br />
+        <button class='downloadbtn1' type="button" onClick="getpixel2()">getpixel</button>
+        <br>
         <canvas class='resizingcanvas' id="imgcanvas_pixel" style="background-color:#fff"></canvas><br/>
     </form>
-    <button class='downloadbtn1' type="button" onClick="getpixel2()">getpixel</button>
 
     <div id="compressedimg1" style="display:none">0</div>
 
