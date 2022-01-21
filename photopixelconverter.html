@@ -1,0 +1,356 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <title>ios app icon maker</title>
+</head>
+
+<style>
+    #floating-panel {
+        width: 100% z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto', 'sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+    }
+    
+    #map {
+        height: 400px;
+        width: 100%;
+    }
+    
+    .formtext {
+        font-size: 20px;
+    }
+    
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    
+    html,
+    body,
+    #fullheight {
+        min-height: 100% !important;
+    }
+    
+    body {
+        padding-left: 10%;
+        padding-right: 10%;
+        background-color: #CCC;
+    }
+    
+    a {
+        text-decoration: none;
+        width: 60%;
+    }
+    
+    input {
+        width: 90%;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .submitbutton {
+        background-color: #090;
+        height: 50px;
+        width: 300px;
+        border-radius: 10px;
+        text-align: center;
+        color: #FFF;
+        size: 30px;
+        padding: 2px;
+        font-size: 20px;
+    }
+    
+    .removebutton {
+        background-color: #F00;
+        height: 40px;
+        width: 50%px;
+        border-radius: 10px;
+        text-align: center;
+        color: #FFF;
+        size: 30px;
+        padding: 2px;
+        font-size: 20px;
+    }
+    
+    .removeimgbutton {
+        background-color: #FFF;
+        height: 50px;
+        width: 100px;
+        text-align: left;
+        size: 30px;
+        font-size: 15px;
+        border: none;
+    }
+    
+    .contenttext {
+        font-size: 20px;
+        width: 90%;
+        min-height: 100px;
+    }
+    
+    .expandbtn {
+        background-color: #fff;
+        height: 20px;
+        width: 100%;
+        color: #000;
+        font-size: 20px;
+        border: none;
+        text-align: left;
+        vertical-align: central;
+    }
+    
+    button:focus {
+        outline: none;
+    }
+    
+    .locationbtn {
+        background-color: #FFF;
+        height: 50px;
+        width: 50px;
+        text-align: central;
+        size: 30px;
+        font-size: 15px;
+        border: none;
+    }
+    
+    .locationbox {}
+    
+    .resizingcanvas {
+        border-color: #000000;
+        border-width: 2px;
+        border: solid;
+        width: auto;
+        height: auto;
+    }
+    
+    .downloadbtn1 {
+        width: 150px;
+        padding: 10px;
+        font-size: 15px
+    }
+    
+    .i1 {
+        font-size: 30px;
+        width: 100px;
+        ;
+    }
+</style>
+
+<body style="background:#88FFD4;">
+
+    interval_X<input type="number" id='inputw' class='i1' value="10" /> interval_y
+    <input type="number" id='inputh' class='i1' value="10" />
+
+
+
+
+
+    <form id='editform' method="post" style="text-align:left; width:100%" enctype="multipart/form-data">
+
+        <br />
+
+        <font class="formtext"><b>Picture pixel art maker</b></font><br />
+        <hr /><br />
+
+        <font class="formtext">Upload a square photo</font><br />
+
+        <input type='file' id="fileUpload" accept="image/*" name="photofile1" />
+
+        <input id='hidden_data' type="hidden" name="photo1" />
+
+        <br />
+        <br /><canvas class='resizingcanvas' id="imgcanvas" style="background-color:#fff"></canvas><br/>
+        <br />
+        <canvas class='resizingcanvas' id="imgcanvas_pixel" style="background-color:#fff"></canvas><br/>
+    </form>
+    <button class='downloadbtn1' type="button" onClick="getpixel2()">getpixel</button>
+
+    <div id="compressedimg1" style="display:none">0</div>
+
+
+
+</body>
+
+<script>
+    var imagesize1 = 0;
+
+    var loadimagepreview = function(event) {
+
+        var previewimg = document.getElementById('previewimg');
+
+        previewimg.src = URL.createObjectURL(event.target.files[0]);
+
+    };
+</script>
+
+<script>
+    function readImage() {
+
+        var FR = new FileReader();
+        FR.onload = function(e) {
+            var img = new Image();
+            img.src = e.target.result;
+            img.addEventListener("load", function() {
+
+                var canvas = document.getElementById("imgcanvas");
+                var context = canvas.getContext("2d");
+
+                //var downsizeto = 500;
+
+
+                canvas.width = this.width;
+                canvas.height = this.height;
+                console.log(canvas.width + "," + canvas.height);
+
+                context.drawImage(img, 0, 0, this.width, this.height);
+                var ctx_p = document.getElementById('imgcanvas_pixel');
+                ctx_p.width = this.width;
+                ctx_p.height = this.height;
+
+
+            });
+
+            img.src = e.target.result;
+
+        };
+
+        FR.readAsDataURL(this.files[0]);
+
+
+
+    }
+
+    function getpixel2() {
+        var ctx = document.getElementById('imgcanvas');
+        var ctx_p = document.getElementById('imgcanvas_pixel');
+        var c = ctx.getContext("2d");
+        var c_p = ctx_p.getContext("2d");
+        var xmax = ctx.width;
+        var ymax = ctx.height;
+        ctx_p.width = ctx.width;
+        ctx_p.height = ctx.height;
+
+        var pos_x = 0;
+        var pos_y = 0;
+        //var colorstring = "red";
+        console.log(xmax + "," + ymax);
+        var w = parseInt(document.getElementById('inputw').value);
+        var h = parseInt(document.getElementById('inputh').value);
+
+        for (var x = 0; x < xmax / w; x++) {
+            pos_y = 0;
+            for (var y = 0; y < ymax / h; y++) {
+
+
+
+                var imgData = c.getImageData(pos_x, pos_y, w, h);
+                c_p.fillStyle = "rgba(" + imgData.data[0] + "," + imgData.data[1] + "," + imgData.data[2] + ",1)";
+                //console.log(x + "," + y + "->" + colorstring + "(" + pos_x + "," + pos_y + ")");
+
+                //"rgba(" + imgData.data[0] + "," + imgData.data[1] + "," + imgData.data[2] + ",1)";
+                c_p.fillRect(pos_x, pos_y, w, h);
+
+                /*if (colorstring == "red") {
+                    colorstring = "blue";
+                } else if (colorstring == "blue") {
+                    colorstring = "green";
+                } else {
+                    colorstring = "red";
+                }
+                */
+
+
+                pos_y = pos_y + h;
+
+
+
+            }
+            pos_x = pos_x + w;
+
+        }
+        // c_p.fillStyle = "black";
+        //c_p.fillRect(10, 5, 10, 5);
+
+
+    }
+
+    function getpixel3() {
+        var ctx = document.getElementById('imgcanvas');
+        var ctx_p = document.getElementById('imgcanvas_pixel');
+        var c = ctx.getContext("2d");
+        var c_p = ctx_p.getContext("2d");
+        var xmax = Math.round(ctx.width / 10);
+        var ymax = Math.round(ctx.height / 10);
+        for (var x = 0; x < xmax * 10; x++) {
+            for (var y = 0; y < ymax * 10; y++) {
+
+                var imgData = c.getImageData(x * 10, y * 10, 1, 1);
+                c_p.fillStyle = "rgba(" + imgData.data[0] + "," + imgData.data[1] + "," + imgData.data[2] + ",1)";
+                c_p.fillRect(x, y, 100, 100);
+
+            }
+        }
+
+
+    }
+
+    function getpixel() {
+        var ctx = document.getElementById('imgcanvas');
+        console.log(ctx.width + ", " + ctx.height);
+        var ctx_p = document.getElementById('imgcanvas_pixel');
+        var c = ctx.getContext("2d");
+        var c_p = ctx_p.getContext("2d");
+
+        var pixelunit = 1;
+        var xmax = Math.round(ctx.width / 1);
+        var ymax = Math.round(ctx.height / 1);
+        var mulitval = 4;
+
+
+        for (var x = 0; x < ctx.width; x++) {
+            for (var y = 0; y < ctx.height; y++) {
+                var imgData = c.getImageData(x * pixelunit, y * pixelunit, pixelunit, pixelunit);
+                c_p.fillStyle = "rgba(" + imgData.data[0] + "," + imgData.data[1] + "," + imgData.data[2] + ",1)";
+                c_p.fillRect(x * 1, y * 1, 1, 1);
+
+            }
+
+        }
+
+        /*var count = 1;
+        for (var i = 0; i < imgData.data.length; i += 4) {
+            // console.log("rgba:" + count + ": " + imgData.data[i] + "," + imgData.data[i + 1] + "," + imgData.data[i + 2] + "," + imgData.data[i + 3]);
+           
+            count++;
+        }
+        */
+
+    }
+
+
+    document.getElementById("fileUpload").addEventListener("change", readImage, false);
+
+    function download(target) {
+        var download = document.getElementById("download" + target);
+        var image = document.getElementById("imgcanvas_pixel").toDataURL("image/png")
+            .replace("image/png", "image/octet-stream");
+        download.setAttribute("href", image);
+        download.setAttribute("download", "logo_" + target + ".png");
+    }
+</script>
+
+
+
+
+
+</html>
